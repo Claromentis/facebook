@@ -1,5 +1,5 @@
 {
-    "name": "opauth/facebook",
+    "name": "claromentis/opauth-facebook",
     "description": "Facebook strategy for Opauth",
     "keywords": ["authentication", "auth", "facebook"],
     "homepage": "http://opauth.org",
@@ -17,7 +17,10 @@
     ],
     "require": {
         "php": ">=5.3.0",
-        "opauth/opauth": "~1.0"
+        "claromentis/opauth": "^1.0"
+    },
+    "replace": {
+        "opauth/facebook": "1.x"
     },
     "autoload": {
         "psr-4": {
