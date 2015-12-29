@@ -117,7 +117,7 @@ class Facebook extends AbstractStrategy
      */
     protected function codeError()
     {
-        return $this->error($_GET['error_description'], $_GET['error'], $_GET);
+        return $this->error($_GET['error_message'], $_GET['error_code'], $_GET);
     }
 
     /**
