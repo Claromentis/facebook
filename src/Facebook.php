@@ -46,7 +46,7 @@ class Facebook extends AbstractStrategy
      */
     public function request()
     {
-        $url = 'https://www.facebook.com/dialog/oauth';
+        $url = 'https://www.facebook.com/v2.8/dialog/oauth';
         $strategyKeys = array(
             'scope',
             'state',
@@ -74,7 +74,7 @@ class Facebook extends AbstractStrategy
         $url = 'https://graph.facebook.com/oauth/access_token';
         $params = $this->callbackParams();
         $response = $this->http->get($url, $params);
-        parse_str($response, $results);
+	    $results = json_decode($response, true);
 
         if (empty($results['access_token'])) {
             return $this->tokenError($response);
@@ -88,9 +88,9 @@ class Facebook extends AbstractStrategy
         $response = $this->response($me);
         $response->credentials = array(
             'token' => $results['access_token'],
-            'expires' => isset($results['expires']) ? date('c', time() + $results['expires']) : null
+            'expires' => isset($results['expires']) ? date('c', time() + $results['expires_in']) : null
         );
-        $response->info['image'] = 'https://graph.facebook.com/' . $me['id'] . '/picture?type=square';
+        $response->info['image'] = 'https://graph.facebook.com/v2.8/' . $me['id'] . '/picture?type=large';
         return $response;
     }
 
@@ -137,10 +137,14 @@ class Facebook extends AbstractStrategy
      */
     protected function me($access_token)
     {
-        $me = $this->http->get('https://graph.facebook.com/me', array(
-            'access_token' => $access_token,
-            'fields' => 'id,name,first_name,last_name,email'
-        ));
+	    $fields = 'id,name,email';//default value
+	    if ( isset($this->strategy['fields']) ) {
+		    $fields = $this->strategy['fields'];
+	    }
+
+	    $me = $this->http->get('https://graph.facebook.com/v2.8/me', array(
+	        'access_token' => $access_token,
+	        'fields' => $fields));
         if (empty($me)) {
             return false;
         }
